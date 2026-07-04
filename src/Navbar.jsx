@@ -1,12 +1,19 @@
 import { useEffect } from 'react'
 import navLogo from './assets/navlogo.png'
+import xLogo from './assets/xlogo.png'
+import telegramLogo from './assets/telegram.png'
+import desxLogo from './assets/desx.png'
 
-const links = [
-  { label: 'Home', href: '#home' },
+const mobileLinks = [
   { label: 'About', href: '#about' },
+  { label: 'Contract Address', href: '#contract' },
   { label: 'How to Buy', href: '#how-to-buy' },
-  { label: 'Tokenomics', href: '#tokenomics' },
-  { label: 'Community', href: '#community' },
+]
+
+const socials = [
+  { label: 'X', href: 'https://x.com/', icon: xLogo },
+  { label: 'Telegram', href: 'https://t.me/', icon: telegramLogo },
+  { label: 'DexScreener', href: 'https://dexscreener.com/', icon: desxLogo },
 ]
 
 function Navbar({ menuOpen, onToggle, onClose }) {
@@ -24,10 +31,34 @@ function Navbar({ menuOpen, onToggle, onClose }) {
           <img src={navLogo} alt="Corny on the Bob" className="navbar__logo" />
         </a>
 
-        <ul className="navbar__links navbar__links--desktop">
-          {links.map((link) => (
-            <li key={link.href}>
-              <a href={link.href}>{link.label}</a>
+        <div className="navbar__actions navbar__actions--desktop">
+          <ul className="navbar__socials">
+            {socials.map((social) => (
+              <li key={social.label}>
+                <a
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={social.label}
+                >
+                  <img src={social.icon} alt="" className="navbar__social-icon" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <ul className="navbar__socials navbar__socials--bar">
+          {socials.map((social) => (
+            <li key={social.label}>
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={social.label}
+              >
+                <img src={social.icon} alt="" className="navbar__social-icon" />
+              </a>
             </li>
           ))}
         </ul>
@@ -52,7 +83,7 @@ function Navbar({ menuOpen, onToggle, onClose }) {
         aria-hidden={!menuOpen}
       >
         <ul className="navbar__links navbar__links--mobile">
-          {links.map((link) => (
+          {mobileLinks.map((link) => (
             <li key={link.href}>
               <a href={link.href} onClick={onClose}>
                 {link.label}
@@ -60,6 +91,14 @@ function Navbar({ menuOpen, onToggle, onClose }) {
             </li>
           ))}
         </ul>
+
+        <a
+          className="navbar__buy-btn"
+          href="#how-to-buy"
+          onClick={onClose}
+        >
+          Buy Corny
+        </a>
       </div>
 
       <button

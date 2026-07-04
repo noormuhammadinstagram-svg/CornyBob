@@ -1,3 +1,13 @@
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;

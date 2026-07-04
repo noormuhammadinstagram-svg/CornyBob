@@ -949,10 +949,11 @@
 .about-corny__title {
   margin: 0;
   color: #fff;
+  font-family: 'Candy Beans', system-ui, sans-serif;
   font-size: clamp(1.8rem, 5vw, 3rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
 }
 
 .about-corny__grid {
@@ -1038,10 +1039,11 @@
 .how-to-buy__title {
   margin: 0;
   color: #fff;
+  font-family: 'Candy Beans', system-ui, sans-serif;
   font-size: clamp(1.8rem, 5vw, 3rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
 }
 
 .how-to-buy__subtitle {
@@ -1250,9 +1252,10 @@
 .ca-section__title {
   margin: 0;
   color: #1a1208;
+  font-family: 'Candy Beans', system-ui, sans-serif;
   font-size: clamp(2.1rem, 5vw, 3.4rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-weight: normal;
+  letter-spacing: 0.02em;
   line-height: 1.08;
 }
 

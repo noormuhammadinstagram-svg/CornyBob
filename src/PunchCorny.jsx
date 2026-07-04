@@ -37,15 +37,46 @@ function countPresence(state) {
   return Object.values(state).reduce((total, entries) => total + entries.length, 0)
 }
 
+function buildShareMessage(score) {
+  return (
+    `I just smashed a ${score} combo on Corny on the Bob! ` +
+    `Do Cornying and try to beat my score — the cornfield is calling! ` +
+    `#CornyOnTheBob #DoCornying`
+  )
+}
+
 function PunchCorny() {
   const [isHit, setIsHit] = useState(false)
   const [totalBonks, setTotalBonks] = useState(0)
   const [combo, setCombo] = useState(0)
+  const [bestCombo, setBestCombo] = useState(0)
   const [people, setPeople] = useState(isSupabaseConfigured ? 1 : 0)
   const [liveReady, setLiveReady] = useState(false)
+  const [sharing, setSharing] = useState(false)
+  const [shareVisible, setShareVisible] = useState(false)
+  const [shareSeconds, setShareSeconds] = useState(0)
   const resetTimer = useRef(0)
   const comboTimer = useRef(0)
+  const shareCountdownRef = useRef(0)
   const recentClicks = useRef([])
+
+  const startShareCountdown = useCallback(() => {
+    window.clearInterval(shareCountdownRef.current)
+    setShareVisible(true)
+    setShareSeconds(10)
+
+    shareCountdownRef.current = window.setInterval(() => {
+      setShareSeconds((seconds) => {
+        if (seconds <= 1) {
+          window.clearInterval(shareCountdownRef.current)
+          setShareVisible(false)
+          return 0
+        }
+        return seconds - 1
+      })
+    }, 1000)
+  }, [])
+
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
       const saved = Number(localStorage.getItem(STORAGE_KEY))
@@ -63,6 +94,7 @@ function PunchCorny() {
         window.clearInterval(id)
         window.clearTimeout(resetTimer.current)
         window.clearTimeout(comboTimer.current)
+        window.clearInterval(shareCountdownRef.current)
       }
     }
 
@@ -131,6 +163,7 @@ function PunchCorny() {
       active = false
       window.clearTimeout(resetTimer.current)
       window.clearTimeout(comboTimer.current)
+      window.clearInterval(shareCountdownRef.current)
       supabase.removeChannel(statsChannel)
       supabase.removeChannel(presenceChannel)
     }
@@ -179,7 +212,11 @@ function PunchCorny() {
       }
       return next
     })
-    setCombo((count) => count + 1)
+    setCombo((count) => {
+      const next = count + 1
+      setBestCombo((best) => Math.max(best, next))
+      return next
+    })
     playPunchSound(rate)
 
     if (isSupabaseConfigured) {
@@ -197,15 +234,47 @@ function PunchCorny() {
     }, COMBO_DISPLAY_MS)
   }, [getSoundRate, playPunchSound, syncPunchToSupabase])
 
+  useEffect(() => {
+    if (combo >= 100) {
+      startShareCountdown()
+    }
+  }, [combo, startShareCountdown])
+
+  const shareCombo = useCallback(() => {
+    if (!shareVisible || bestCombo < 100 || sharing) return
+
+    setSharing(true)
+
+    const score = bestCombo
+    const pageUrl = window.location.href.split('#')[0]
+    const imageUrl = new URL(noHitImg, window.location.origin).href
+    const message =
+      `${buildShareMessage(score)}\n\n` +
+      `Play here: ${pageUrl}\n` +
+      `Corny: ${imageUrl}`
+
+    const tweetUrl =
+      'https://x.com/intent/tweet?text=' + encodeURIComponent(message)
+
+    const shareWindow = window.open(tweetUrl, '_blank', 'noopener,noreferrer')
+
+    // Fallback if popup blocked
+    if (!shareWindow) {
+      window.location.assign(tweetUrl)
+    }
+
+    window.setTimeout(() => setSharing(false), 400)
+  }, [bestCombo, shareVisible, sharing])
+
   const comboProgress = getComboProgress(combo)
   const comboLabel = getComboLabel(combo)
 
   return (
     <div className="punch-stage">
-      <aside className="bonk-stats" aria-label="Bonk stats">
+      <aside className="bonk-stats" aria-label="Hit stats">
         <article className="bonk-card">
           <p className="bonk-card__label">
-            Total Bonks
+            Total Hits
             {isSupabaseConfigured && liveReady ? (
               <span className="bonk-card__live">Live</span>
             ) : null}
@@ -217,7 +286,7 @@ function PunchCorny() {
             <span className="bonk-card__icon" aria-hidden="true">
               🌽
             </span>
-            Bonks
+            Hits
           </p>
         </article>
 
@@ -234,7 +303,7 @@ function PunchCorny() {
 
         <article className="bonk-card">
           <p className="bonk-card__label">
-            People Bonking Now
+            People Cornying Now
             {isSupabaseConfigured ? (
               <span className="bonk-card__live">Live</span>
             ) : null}
@@ -246,6 +315,26 @@ function PunchCorny() {
             {formatNumber(people)}
           </p>
         </article>
+
+        {shareVisible ? (
+          <button
+            type="button"
+            className="combo-share"
+            onClick={shareCombo}
+            disabled={sharing}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"
+              />
+            </svg>
+            <span>Share {formatNumber(bestCombo)} Combo</span>
+            <span className="combo-share__timer" aria-label={`${shareSeconds} seconds left`}>
+              {shareSeconds}s
+            </span>
+          </button>
+        ) : null}
       </aside>
 
       <div className="punch-corny">

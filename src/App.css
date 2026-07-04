@@ -465,6 +465,7 @@
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  text-decoration: none;
   cursor: pointer;
   pointer-events: auto;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
@@ -499,11 +500,6 @@
   transform: translateY(-2px);
   border-color: rgba(245, 197, 66, 0.55);
   background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-}
-
-.combo-share:disabled {
-  opacity: 0.7;
-  cursor: wait;
 }
 
 .bonk-card {
@@ -634,6 +630,59 @@
   transition: width 0.15s ease-out;
 }
 
+@media (max-width: 899px) {
+  .bonk-card.bonk-card--total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 14px 12px 12px;
+    background: linear-gradient(
+      160deg,
+      rgba(245, 197, 66, 0.16) 0%,
+      rgba(255, 255, 255, 0.1) 45%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    border-color: rgba(245, 197, 66, 0.38);
+    box-shadow:
+      0 10px 36px rgba(0, 0, 0, 0.38),
+      0 0 28px rgba(245, 197, 66, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -1px 0 rgba(245, 197, 66, 0.08);
+  }
+
+  .bonk-card.bonk-card--total .bonk-card__label {
+    justify-content: space-between;
+    align-self: stretch;
+    width: 100%;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  .bonk-card.bonk-card--total .bonk-card__value {
+    width: 100%;
+    text-align: center;
+    font-size: clamp(1.55rem, 6.5vw, 2.1rem);
+    letter-spacing: -0.03em;
+    text-shadow:
+      0 0 28px rgba(245, 197, 66, 0.5),
+      0 4px 18px rgba(0, 0, 0, 0.45);
+  }
+
+  .bonk-card.bonk-card--total .bonk-card__meta {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 6px;
+    color: rgba(245, 197, 66, 0.92);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}
+
 .punch-corny {
   display: flex;
   flex-direction: column;
@@ -760,6 +809,50 @@
   .bonk-card {
     padding: 14px 16px;
     border-radius: 18px;
+  }
+
+  .bonk-card.bonk-card--total {
+    display: block;
+    text-align: left;
+    padding: 14px 16px;
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.06) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.28);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .bonk-card.bonk-card--total .bonk-card__label {
+    justify-content: space-between;
+    width: auto;
+    gap: 4px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .bonk-card.bonk-card--total .bonk-card__value {
+    width: auto;
+    text-align: left;
+    font-size: clamp(0.95rem, 3.6vw, 1.15rem);
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  .bonk-card.bonk-card--total .bonk-card__meta {
+    display: inline-flex;
+    justify-content: flex-start;
+    width: auto;
+    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.68rem;
+    letter-spacing: 0;
+    text-transform: none;
   }
 
   .bonk-card__label {

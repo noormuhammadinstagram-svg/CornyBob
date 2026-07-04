@@ -10,6 +10,8 @@ const MAX_RATE = 2.4
 const MIN_RATE = 1.15
 const STORAGE_KEY = 'corny-total-bonks'
 const LIVE_CHANNEL = 'bonk-live'
+const SHARE_CORNY_IMAGE =
+  'https://res.cloudinary.com/dnbeefkuz/image/upload/v1783170369/nohit_jmu6m9.png'
 
 function formatNumber(value) {
   return value.toLocaleString('en-US')
@@ -41,8 +43,23 @@ function buildShareMessage(score) {
   return (
     `I just smashed a ${score} combo on Corny on the Bob! ` +
     `Do Cornying and try to beat my score — the cornfield is calling! ` +
-    `#CornyOnTheBob #DoCornying`
+    `$CORNY post 🌽 #CornyOnTheBob #DoCornying`
   )
+}
+
+function buildTweetUrl(score) {
+  const pageUrl = window.location.href.split('#')[0]
+  const message =
+    `${buildShareMessage(score)}\n\n` +
+    `Play here: ${pageUrl}\n` +
+    `Corny: ${SHARE_CORNY_IMAGE}`
+
+  const params = new URLSearchParams({
+    text: message,
+    url: SHARE_CORNY_IMAGE,
+  })
+
+  return `https://x.com/intent/tweet?${params.toString()}`
 }
 
 function PunchCorny() {
@@ -52,7 +69,6 @@ function PunchCorny() {
   const [bestCombo, setBestCombo] = useState(0)
   const [people, setPeople] = useState(isSupabaseConfigured ? 1 : 0)
   const [liveReady, setLiveReady] = useState(false)
-  const [sharing, setSharing] = useState(false)
   const [shareVisible, setShareVisible] = useState(false)
   const [shareSeconds, setShareSeconds] = useState(0)
   const resetTimer = useRef(0)
@@ -240,39 +256,13 @@ function PunchCorny() {
     }
   }, [combo, startShareCountdown])
 
-  const shareCombo = useCallback(() => {
-    if (!shareVisible || bestCombo < 100 || sharing) return
-
-    setSharing(true)
-
-    const score = bestCombo
-    const pageUrl = window.location.href.split('#')[0]
-    const imageUrl = new URL(noHitImg, window.location.origin).href
-    const message =
-      `${buildShareMessage(score)}\n\n` +
-      `Play here: ${pageUrl}\n` +
-      `Corny: ${imageUrl}`
-
-    const tweetUrl =
-      'https://x.com/intent/tweet?text=' + encodeURIComponent(message)
-
-    const shareWindow = window.open(tweetUrl, '_blank', 'noopener,noreferrer')
-
-    // Fallback if popup blocked
-    if (!shareWindow) {
-      window.location.assign(tweetUrl)
-    }
-
-    window.setTimeout(() => setSharing(false), 400)
-  }, [bestCombo, shareVisible, sharing])
-
   const comboProgress = getComboProgress(combo)
   const comboLabel = getComboLabel(combo)
 
   return (
     <div className="punch-stage">
       <aside className="bonk-stats" aria-label="Hit stats">
-        <article className="bonk-card">
+        <article className="bonk-card bonk-card--total">
           <p className="bonk-card__label">
             Total Hits
             {isSupabaseConfigured && liveReady ? (
@@ -317,11 +307,11 @@ function PunchCorny() {
         </article>
 
         {shareVisible ? (
-          <button
-            type="button"
+          <a
             className="combo-share"
-            onClick={shareCombo}
-            disabled={sharing}
+            href={buildTweetUrl(bestCombo)}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path
@@ -333,7 +323,7 @@ function PunchCorny() {
             <span className="combo-share__timer" aria-label={`${shareSeconds} seconds left`}>
               {shareSeconds}s
             </span>
-          </button>
+          </a>
         ) : null}
       </aside>
 

@@ -10,8 +10,6 @@ const MAX_RATE = 2.4
 const MIN_RATE = 1.15
 const STORAGE_KEY = 'corny-total-bonks'
 const LIVE_CHANNEL = 'bonk-live'
-const SHARE_CORNY_IMAGE =
-  'https://res.cloudinary.com/dnbeefkuz/image/upload/v1783170369/nohit_jmu6m9.png'
 
 function formatNumber(value) {
   return value.toLocaleString('en-US')
@@ -49,17 +47,9 @@ function buildShareMessage(score) {
 
 function buildTweetUrl(score) {
   const pageUrl = window.location.href.split('#')[0]
-  const message =
-    `${buildShareMessage(score)}\n\n` +
-    `Play here: ${pageUrl}\n` +
-    `Corny: ${SHARE_CORNY_IMAGE}`
+  const message = `${buildShareMessage(score)}\n\nPlay here: ${pageUrl}`
 
-  const params = new URLSearchParams({
-    text: message,
-    url: SHARE_CORNY_IMAGE,
-  })
-
-  return `https://x.com/intent/tweet?${params.toString()}`
+  return `https://x.com/intent/tweet?text=${encodeURIComponent(message)}`
 }
 
 function PunchCorny() {
